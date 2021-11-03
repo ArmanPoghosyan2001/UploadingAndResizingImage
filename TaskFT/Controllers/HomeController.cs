@@ -44,15 +44,22 @@ namespace TaskFT.Controllers
             using (FileStream stream = new FileStream(Path.Combine(path, fileName), FileMode.Create))
             {
                 postedFile.CopyTo(stream);
-                ViewBag.Message += string.Format($"<b>{fileName}</b> uploaded.<br />");
+                ViewBag.Message += $"<b>{fileName}</b> uploaded.<br />";
 
                 var image = Image.Load(postedFile.OpenReadStream());
                 image.Mutate(x => x.Resize(256, 256));
                 image.Save(Path.Combine(path, "_256" + fileName));
+                image.Mutate(x => x.Resize(56, 56));
+                image.Save(Path.Combine(path, "_56" + fileName));
+
+                image.Mutate(x => x.Crop(30, 30));
+                image.Save(Path.Combine(path, "cropped" + fileName));
 
                 List<ImgModel> imgs = new List<ImgModel>();
                 imgs.Add(new ImgModel { Name = fileName, Path = Path.Combine(path, fileName) });
                 imgs.Add(new ImgModel { Name = "_256" + fileName, Path = Path.Combine(path, "_256" + fileName) });
+                imgs.Add(new ImgModel { Name = "_56" + fileName, Path = Path.Combine(path, "_56" + fileName) });
+                imgs.Add(new ImgModel { Name = "cropped" + fileName, Path = Path.Combine(path, "cropped" + fileName) });
 
                 _db.Images.AddRange(imgs);
                 _db.SaveChanges();
@@ -63,7 +70,8 @@ namespace TaskFT.Controllers
 
         public IActionResult Privacy()
         {
-            return View();
+            var imgs = _db.Images.ToList();
+            return View(imgs);
         }
 
 

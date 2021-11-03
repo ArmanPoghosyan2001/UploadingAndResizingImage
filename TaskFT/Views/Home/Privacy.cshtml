@@ -3,4 +3,9 @@
 }
 <h1>@ViewData["Title"]</h1>
 
-<p>Use this page to detail your site's privacy policy.</p>
+@model IEnumerable<ImgModel>
+
+@foreach (var item in Model)
+{
+<img src="@item.Path" alt="@item.Name" />
+}
