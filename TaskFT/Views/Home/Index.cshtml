@@ -1,0 +1,20 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+@model IEnumerable<ImgModel>
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+    <p>Learn about <a href="https://docs.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
+</div>
+@*@foreach (var item in Model)
+{
+    <img src="@item.Path" alt="@item.Name" />
+}*@
+
+<form method="post" enctype="multipart/form-data">
+    <span>Select File:</span>
+    <input type="file" name="postedFile" />
+    <input type="submit" value="Upload" />
+    <br />
+    <span style="color:green">@Html.Raw(ViewBag.Message)</span>
+</form>
