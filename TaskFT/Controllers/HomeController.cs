@@ -34,9 +34,7 @@ namespace TaskFT.Controllers
         [HttpPost]
         public IActionResult Index(IFormFile postedFile)
         {
-           // string wwwPath = Environment.WebRootPath;
-
-            string path = "Images";
+            string path = "/Images";
             string newPath = "wwwroot/Images";
             if (!Directory.Exists(newPath))
             {
