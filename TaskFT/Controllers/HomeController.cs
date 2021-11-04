@@ -13,6 +13,7 @@ using System.Drawing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.Extensions.FileProviders;
+using System;
 
 namespace TaskFT.Controllers
 {
@@ -40,8 +41,9 @@ namespace TaskFT.Controllers
             {
                 Directory.CreateDirectory(newPath);
             }
-
-            string fileName = Path.GetFileName(postedFile.FileName);
+            var FileExtension = Path.GetExtension(Path.GetFileName(postedFile.FileName));
+            string fileName = Convert.ToString(Guid.NewGuid());
+            fileName += FileExtension;
             using (FileStream stream = new FileStream(Path.Combine(newPath, fileName), FileMode.Create))
             {
                 postedFile.CopyTo(stream);
@@ -94,7 +96,7 @@ namespace TaskFT.Controllers
     }
     static class _Path
     {
-        public static string Combine(string firstPart,string secondPart)
+        public static string Combine(string firstPart, string secondPart)
         {
             return $"{firstPart}/{secondPart}";
         }
