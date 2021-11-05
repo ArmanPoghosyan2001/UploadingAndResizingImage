@@ -49,31 +49,33 @@ namespace TaskFT.Controllers
                 string fileName = Convert.ToString(Guid.NewGuid());
                 fileName += FileExtension;
 
-                //Dictionary<int, string> names = new Dictionary<int, string>();
-                //names.Add(0,"256_siz")
-
                 var image = Image.Load(postedFile.OpenReadStream());
-                
+
                 if (!Directory.Exists(Path.Combine(newPath, "Original")))
                 {
                     Directory.CreateDirectory(Path.Combine(newPath, "Original"));
                 }
+                
                 image.Save(Path.Combine(newPath, "Original", fileName));
                 ViewBag.Message += $"<b>{fileName}</b> uploaded.<br />";
+                
+                Dictionary<int, string> names = new Dictionary<int, string>();
+                names.Add(0, "256_size");
+                names.Add(1, "56_size");
 
-                if (!Directory.Exists(Path.Combine(newPath, "256_size")))
-                {
-                    Directory.CreateDirectory(Path.Combine(newPath, "256_size"));
-                }
-                image.Mutate(x => x.Resize(256, 256));
-                image.Save(Path.Combine(newPath, "256_size", fileName));
+                Dictionary<int, int> sizes = new Dictionary<int, int>();
+                sizes.Add(0, 256);
+                sizes.Add(1, 56);
 
-                if (!Directory.Exists(Path.Combine(newPath, "56_size")))
+                for (int i = 0; i < names.Count; i++)
                 {
-                    Directory.CreateDirectory(Path.Combine(newPath, "56_size"));
+                    if (!Directory.Exists(Path.Combine(newPath, $"{names[i]}")))
+                    {
+                        Directory.CreateDirectory(Path.Combine(newPath, $"{names[i]}"));
+                    }
+                    image.Mutate(x => x.Resize(sizes[i], sizes[i]));
+                    image.Save(Path.Combine(newPath, $"{names[i]}", fileName));
                 }
-                image.Mutate(x => x.Resize(56, 56));
-                image.Save(Path.Combine(newPath, "56_size", fileName));
 
                 var size = image.Size();
                 var l = size.Width / 4;
@@ -88,7 +90,7 @@ namespace TaskFT.Controllers
                 image.Mutate(x => x.Crop(Rectangle.FromLTRB(l, t, r, b)));
                 image.Save(Path.Combine(newPath, "cropped", fileName));
 
-                List<ImgModel> imgs = new List<ImgModel>();
+                List<ImgModel> imgs = new List<ImgModel>(4);
                 imgs.Add(new ImgModel { Name = fileName, Path = Path.Combine(path, "original", fileName) });
                 imgs.Add(new ImgModel { Name = fileName, Path = Path.Combine(path, "256_size", fileName) });
                 imgs.Add(new ImgModel { Name = fileName, Path = Path.Combine(path, "56_size", fileName) });
