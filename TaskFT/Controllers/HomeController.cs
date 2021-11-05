@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
 using System.IO;
 using System.Web.Helpers;
-using System.Drawing;
 using SixLabors.ImageSharp;
 using SixLabors.ImageSharp.Processing;
 using Microsoft.Extensions.FileProviders;
@@ -19,8 +18,8 @@ namespace TaskFT.Controllers
 {
     public class HomeController : Controller
     {
-        AppDbContext _db;
-        private IHostingEnvironment Environment;
+        private readonly AppDbContext _db;
+        private readonly IHostingEnvironment Environment;
         public HomeController(AppDbContext db, IHostingEnvironment environment)
         {
             _db = db;
@@ -50,12 +49,20 @@ namespace TaskFT.Controllers
                 ViewBag.Message += $"<b>{fileName}</b> uploaded.<br />";
 
                 var image = Image.Load(postedFile.OpenReadStream());
+
                 image.Mutate(x => x.Resize(256, 256));
                 image.Save(Path.Combine(newPath, "_256" + fileName));
+
                 image.Mutate(x => x.Resize(56, 56));
                 image.Save(Path.Combine(newPath, "_56" + fileName));
 
-                image.Mutate(x => x.Crop(30, 30));
+                var size = image.Size();
+                var l = size.Width / 4;
+                var t = size.Height / 4;
+                var r = 3 * (size.Width / 4);
+                var b = 3 * (size.Height / 4);
+
+                image.Mutate(x => x.Crop(Rectangle.FromLTRB(l,t,r,b)));
                 image.Save(Path.Combine(newPath, "cropped" + fileName));
 
                 List<ImgModel> imgs = new List<ImgModel>();
@@ -75,15 +82,6 @@ namespace TaskFT.Controllers
         {
 
             var imgs = _db.Images.ToList();
-
-            //foreach (var item in imgs)
-            //{
-            //    ImageResponseModel image = new ImageResponseModel
-            //    {
-            //        ImagePath = "/Images/" + item.Name
-            //    };
-            //    imageResponseModels.Add(image);
-            //}
             return View(imgs);
         }
 
@@ -92,13 +90,6 @@ namespace TaskFT.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-    }
-    static class _Path
-    {
-        public static string Combine(string firstPart, string secondPart)
-        {
-            return $"{firstPart}/{secondPart}";
         }
     }
 }
