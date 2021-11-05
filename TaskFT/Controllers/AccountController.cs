@@ -60,12 +60,12 @@ namespace TaskFT.Controllers
                 ViewBag.Message += $"<b>{fileName}</b> uploaded.<br />";
                 
                 Dictionary<int, string> names = new Dictionary<int, string>();
-                names.Add(0, "256_size");
-                names.Add(1, "56_size");
+                names.Add(0, $"{PhotoSizes.firstSize}_size");
+                names.Add(1, $"{PhotoSizes.secondSize}_size");
 
                 Dictionary<int, int> sizes = new Dictionary<int, int>();
-                sizes.Add(0, 256);
-                sizes.Add(1, 56);
+                sizes.Add(0, (int)PhotoSizes.firstSize);
+                sizes.Add(1, (int)PhotoSizes.secondSize);
 
                 for (int i = 0; i < names.Count; i++)
                 {

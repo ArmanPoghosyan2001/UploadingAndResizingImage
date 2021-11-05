@@ -7,9 +7,7 @@ namespace TaskFT
 {
     public enum PhotoSizes
     {
-        Original,
-        _256Size,
-        _56Size,
-        Cropped
+        firstSize = 256,
+        secondSize = 56
     }
 }
