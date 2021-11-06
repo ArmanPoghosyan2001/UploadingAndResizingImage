@@ -40,14 +40,15 @@ namespace TaskFT.Controllers
                 string path = $"/Images/{user.Id}/ProileImage";
                 string newPath = $"wwwroot/Images/{user.Id}/ProileImage";
 
+                var FileExtension = Path.GetExtension(Path.GetFileName(postedFile.FileName));
+                string fileName = Convert.ToString(Guid.NewGuid());
+                fileName += FileExtension;
+
                 if (!Directory.Exists(newPath))
                 {
                     Directory.CreateDirectory(newPath);
                 }
 
-                var FileExtension = Path.GetExtension(Path.GetFileName(postedFile.FileName));
-                string fileName = Convert.ToString(Guid.NewGuid());
-                fileName += FileExtension;
 
                 var image = Image.Load(postedFile.OpenReadStream());
 
@@ -55,10 +56,11 @@ namespace TaskFT.Controllers
                 {
                     Directory.CreateDirectory(Path.Combine(newPath, "Original"));
                 }
-                
+
                 image.Save(Path.Combine(newPath, "Original", fileName));
+                user.ProilePicture = Path.Combine(path, "Original", fileName);
                 ViewBag.Message += $"<b>{fileName}</b> uploaded.<br />";
-                
+
                 Dictionary<int, string> names = new Dictionary<int, string>();
                 names.Add(0, $"{PhotoSizes.firstSize}_size");
                 names.Add(1, $"{PhotoSizes.secondSize}_size");
